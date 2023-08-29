@@ -5,7 +5,7 @@ import CrudComponent from "./CrudComponent";
 function App() {
   return (
     <div className="App">
-      <h1>CURD Operation with Axios</h1>
+      <h1>React CURD Operations with Axios</h1>
       <CrudComponent />
     </div>
   );
