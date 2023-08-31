@@ -54,6 +54,7 @@ const CrudComponent = () => {
         phone: "",
         website: "",
       });
+      alert("New User Created Successfully");
       setEditingUser(null);
     } catch (error) {
       console.error("Error creating user:", error);
@@ -78,6 +79,7 @@ const CrudComponent = () => {
         user.id === id ? { ...user, ...editingUser } : user
       );
       setUsers(updatedUsers);
+      alert("User Details Updated Successfully");
       setEditingUser(null);
     } catch (error) {
       console.error("Error updating user:", error);
@@ -91,6 +93,7 @@ const CrudComponent = () => {
       );
       const updatedUsers = users.filter((user) => user.id !== id);
       setUsers(updatedUsers);
+      alert("User Details Deleted Successfully");
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -134,7 +137,7 @@ const CrudComponent = () => {
         <input
           ref={inputPhoneRef}
           className="user-form-input"
-          type="text"
+          type="tel"
           placeholder="Phone"
           value={editingUser ? editingUser.phone : newUser.phone}
           onChange={(e) => handleFieldChange("phone", e.target.value)}
