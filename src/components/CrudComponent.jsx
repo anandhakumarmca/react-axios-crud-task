@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../styles/CrudComponent.css";
-import DummyAvatar from "../assets/user.png"; // Replace with the path to your SVG file
+import DummyAvatar from "../assets/user.png";
 import { AiOutlineMail, AiOutlinePhone, AiOutlineGlobal } from "react-icons/ai";
 
 const CrudComponent = () => {
@@ -19,6 +19,7 @@ const CrudComponent = () => {
     website: "",
   });
   const [validationError, setValidationError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchUsers();
@@ -30,8 +31,10 @@ const CrudComponent = () => {
         "https://library-management-1qq4.onrender.com/users"
       );
       setUsers(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching users:", error);
+      setLoading(false);
     }
   };
 
@@ -62,13 +65,6 @@ const CrudComponent = () => {
   };
 
   const updateUser = async (id) => {
-    // if (id >= 11) {
-    //   setValidationError(false);
-    //   console.error("Error while updating New User");
-    //   setEditingUser(null);
-    //   return;
-    // }
-
     try {
       setValidationError(false);
       await axios.put(
@@ -101,8 +97,6 @@ const CrudComponent = () => {
 
   const handleEditUser = (user) => {
     setEditingUser({ ...user });
-
-    // Set focus on the input fields
     inputNameRef.current.focus();
   };
 
@@ -116,102 +110,108 @@ const CrudComponent = () => {
 
   return (
     <div>
-      <div className="user-form-container">
-        <h2>{editingUser ? "Edit User" : "Add New User"}</h2>
-        <input
-          ref={inputNameRef}
-          className="user-form-input"
-          type="text"
-          placeholder="Name"
-          value={editingUser ? editingUser.name : newUser.name}
-          onChange={(e) => handleFieldChange("name", e.target.value)}
-        />
-        <input
-          ref={inputEmailRef}
-          className="user-form-input"
-          type="text"
-          placeholder="Email"
-          value={editingUser ? editingUser.email : newUser.email}
-          onChange={(e) => handleFieldChange("email", e.target.value)}
-        />
-        <input
-          ref={inputPhoneRef}
-          className="user-form-input"
-          type="tel"
-          placeholder="Phone"
-          value={editingUser ? editingUser.phone : newUser.phone}
-          onChange={(e) => handleFieldChange("phone", e.target.value)}
-        />
-        <input
-          ref={inputWebsiteRef}
-          className="user-form-input"
-          type="text"
-          placeholder="Website"
-          value={editingUser ? editingUser.website : newUser.website}
-          onChange={(e) => handleFieldChange("website", e.target.value)}
-        />
-        {validationError && (
-          <p className="validation-error">Please fill in all required fields</p>
-        )}
-        {editingUser ? (
-          <div className="user-form-button-group">
-            <button
-              className="user-form-button user-card-save-button"
-              onClick={() => updateUser(editingUser.id)}
-            >
-              Save
-            </button>
-            <button
-              className="user-form-button user-card-cancel-button"
-              onClick={() => setEditingUser(null)}
-            >
-              Cancel
-            </button>
+      {loading ? (
+        <div className="loading">Loading...</div>
+      ) : (
+        <div>
+          <div className="user-form-container">
+            <h2>{editingUser ? "Edit User" : "Add New User"}</h2>
+            <input
+              ref={inputNameRef}
+              className="user-form-input"
+              type="text"
+              placeholder="Name"
+              value={editingUser ? editingUser.name : newUser.name}
+              onChange={(e) => handleFieldChange("name", e.target.value)}
+            />
+            <input
+              ref={inputEmailRef}
+              className="user-form-input"
+              type="text"
+              placeholder="Email"
+              value={editingUser ? editingUser.email : newUser.email}
+              onChange={(e) => handleFieldChange("email", e.target.value)}
+            />
+            <input
+              ref={inputPhoneRef}
+              className="user-form-input"
+              type="tel"
+              placeholder="Phone"
+              value={editingUser ? editingUser.phone : newUser.phone}
+              onChange={(e) => handleFieldChange("phone", e.target.value)}
+            />
+            <input
+              ref={inputWebsiteRef}
+              className="user-form-input"
+              type="text"
+              placeholder="Website"
+              value={editingUser ? editingUser.website : newUser.website}
+              onChange={(e) => handleFieldChange("website", e.target.value)}
+            />
+            {validationError && (
+              <p className="validation-error">Please fill in all required fields</p>
+            )}
+            {editingUser ? (
+              <div className="user-form-button-group">
+                <button
+                  className="user-form-button user-card-save-button"
+                  onClick={() => updateUser(editingUser.id)}
+                >
+                  Save
+                </button>
+                <button
+                  className="user-form-button user-card-cancel-button"
+                  onClick={() => setEditingUser(null)}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div>
+                <button
+                  className="user-form-button user-card-create-button"
+                  onClick={createUser}
+                >
+                  Create
+                </button>
+              </div>
+            )}
           </div>
-        ) : (
-          <div>
-            <button
-              className="user-form-button user-card-create-button"
-              onClick={createUser}
-            >
-              Create
-            </button>
+          <div className="user-card-row">
+            {users.map((user) => (
+              <div key={user.id} className="user-card">
+                <div className="user-card-avatar">
+                  <img src={DummyAvatar} alt="Dummy Avatar" />
+                </div>
+                <span className="user-card-name">{user.name}</span>
+                <span className="user-card-email">
+                  <AiOutlineMail /> {user.email}
+                </span>
+                <span className="user-card-details">
+                  <AiOutlinePhone /> {user.phone}
+                </span>
+                <span className="user-card-details">
+                  <AiOutlineGlobal /> {user.website}
+                </span>
+                <div className="user-card-actions">
+                  <button
+                    className="user-card-edit-button"
+                    onClick={() => handleEditUser(user)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="user-card-delete-button"
+                    onClick={() => deleteUser(user.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
-      <div className="user-card-row">
-        {users.map((user) => (
-          <div key={user.id} className="user-card">
-            <div className="user-card-avatar">
-              <img src={DummyAvatar} alt="Dummy Avatar" />
-            </div>
-            <span className="user-card-name">{user.name}</span>
-            <span className="user-card-email">
-              <AiOutlineMail /> {user.email}
-            </span>
-            <span className="user-card-details">
-              <AiOutlinePhone /> {user.phone}
-            </span>
-            <span className="user-card-details">
-              <AiOutlineGlobal /> {user.website}
-            </span>
-            <div className="user-card-actions">
-              <button
-                className="user-card-edit-button"
-                onClick={() => handleEditUser(user)}
-              >
-                Edit
-              </button>
-              <button
-                className="user-card-delete-button"
-                onClick={() => deleteUser(user.id)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
