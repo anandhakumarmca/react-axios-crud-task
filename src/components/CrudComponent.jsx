@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import "../styles/CrudComponent.css";
-import DummyAvatar from "../assets/user.png";
-import { AiOutlineMail, AiOutlinePhone, AiOutlineGlobal } from "react-icons/ai";
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios'; // Import Axios
+import '../styles/CrudComponent.css';
+import DummyAvatar from '../assets/user.png';
+import { AiOutlineMail, AiOutlinePhone, AiOutlineGlobal } from 'react-icons/ai';
+
+// Create an Axios instance with a common base URL
+const api = axios.create({
+  baseURL: 'https://6543385301b5e279de200732.mockapi.io/api/v1', // Replace with your API base URL
+});
 
 const CrudComponent = () => {
   const inputNameRef = useRef(null);
@@ -13,10 +18,10 @@ const CrudComponent = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    website: "",
+    name: '',
+    email: '',
+    phone: '',
+    website: '',
   });
   const [validationError, setValidationError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -27,13 +32,11 @@ const CrudComponent = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(
-        "https://library-management-1qq4.onrender.com/users"
-      );
+      const response = await api.get('/users'); // Use a relative path here
       setUsers(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error('Error fetching users:', error);
       setLoading(false);
     }
   };
@@ -46,52 +49,44 @@ const CrudComponent = () => {
 
     try {
       setValidationError(false);
-      const response = await axios.post(
-        "https://library-management-1qq4.onrender.com/users",
-        newUser
-      );
+      const response = await api.post('/users', newUser); // Use a relative path here
       setUsers([...users, response.data]);
       setNewUser({
-        name: "",
-        email: "",
-        phone: "",
-        website: "",
+        name: '',
+        email: '',
+        phone: '',
+        website: '',
       });
-      alert("New User Created Successfully");
+      alert('New User Created Successfully');
       setEditingUser(null);
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error('Error creating user:', error);
     }
   };
 
   const updateUser = async (id) => {
     try {
       setValidationError(false);
-      await axios.put(
-        `https://library-management-1qq4.onrender.com/users/${id}`,
-        editingUser
-      );
+      await api.put(`/users/${id}`, editingUser); // Use a relative path here
       const updatedUsers = users.map((user) =>
         user.id === id ? { ...user, ...editingUser } : user
       );
       setUsers(updatedUsers);
-      alert("User Details Updated Successfully");
+      alert('User Details Updated Successfully');
       setEditingUser(null);
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error('Error updating user:', error);
     }
   };
 
   const deleteUser = async (id) => {
     try {
-      await axios.delete(
-        `https://library-management-1qq4.onrender.com/users/${id}`
-      );
+      await api.delete(`/users/${id}`); // Use a relative path here
       const updatedUsers = users.filter((user) => user.id !== id);
       setUsers(updatedUsers);
-      alert("User Details Deleted Successfully");
+      alert('User Details Deleted Successfully');
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error('Error deleting user:', error);
     }
   };
 
@@ -115,14 +110,14 @@ const CrudComponent = () => {
       ) : (
         <div>
           <div className="user-form-container">
-            <h2>{editingUser ? "Edit User" : "Add New User"}</h2>
+            <h2>{editingUser ? 'Edit User' : 'Add New User'}</h2>
             <input
               ref={inputNameRef}
               className="user-form-input"
               type="text"
               placeholder="Name"
               value={editingUser ? editingUser.name : newUser.name}
-              onChange={(e) => handleFieldChange("name", e.target.value)}
+              onChange={(e) => handleFieldChange('name', e.target.value)}
             />
             <input
               ref={inputEmailRef}
@@ -130,7 +125,7 @@ const CrudComponent = () => {
               type="text"
               placeholder="Email"
               value={editingUser ? editingUser.email : newUser.email}
-              onChange={(e) => handleFieldChange("email", e.target.value)}
+              onChange={(e) => handleFieldChange('email', e.target.value)}
             />
             <input
               ref={inputPhoneRef}
@@ -138,7 +133,7 @@ const CrudComponent = () => {
               type="tel"
               placeholder="Phone"
               value={editingUser ? editingUser.phone : newUser.phone}
-              onChange={(e) => handleFieldChange("phone", e.target.value)}
+              onChange={(e) => handleFieldChange('phone', e.target.value)}
             />
             <input
               ref={inputWebsiteRef}
@@ -146,7 +141,7 @@ const CrudComponent = () => {
               type="text"
               placeholder="Website"
               value={editingUser ? editingUser.website : newUser.website}
-              onChange={(e) => handleFieldChange("website", e.target.value)}
+              onChange={(e) => handleFieldChange('website', e.target.value)}
             />
             {validationError && (
               <p className="validation-error">Please fill in all required fields</p>
